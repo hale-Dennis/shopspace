@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1007125331564",
+    "firebase_url": "https://firstfirebase-37b96.firebaseio.com",
+    "project_id": "firstfirebase-37b96",
+    "storage_bucket": "firstfirebase-37b96.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1007125331564:android:43ace576ec17c187cea249",
+        "android_client_info": {
+          "package_name": "com.example.shopspace"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1007125331564-i4tuevg7l7r0q7cjhfsgmjk7m4rtev1v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCYM695qYm07wB4yFDM63aktqT7t-DDORg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1007125331564-i4tuevg7l7r0q7cjhfsgmjk7m4rtev1v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
