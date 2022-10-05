@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shopspace/screens/product.dart';
 
 import '../components/grid_card.dart';
 import '../components/loader.dart';
@@ -24,9 +25,9 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
 
   @override
   Widget build(BuildContext context) {
-    onCardPress(Product product){
+    onCardPress(Product product, String userid){
       //route to product screen
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>EditPostScreen(product: product,)));
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductScreen(product: product, userid: userid, homeOrFave: 1,)));
     }
     return Scaffold(
       appBar: AppBar(title: const Text("Favourites"),),
@@ -37,19 +38,14 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
               padding: const EdgeInsets.symmetric(vertical: 30),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, mainAxisSpacing: 15, crossAxisSpacing: 14),
               itemBuilder: (BuildContext context, int index){
-                return Column(
-                  children: [
+                return
                     GridCard(
                         product: snapshot.data![index],
                         index: 0,
                         onPress: (){
-                          onCardPress(snapshot.data![index]);
+                          onCardPress(snapshot.data![index], snapshot.data![index].userid.toString(),);
                         }
-                    ),
-
-                    IconButton(onPressed: (){}, icon: Icon(Icons.delete), tooltip: "Delete from favorites",),
-                  ],
-                );
+                    );
               }
           );
         }else{

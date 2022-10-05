@@ -15,7 +15,8 @@ import '../utils/firestore.dart';
 class ProductScreen extends StatefulWidget {
   final Product product;
   final String userid;
-  const ProductScreen({Key? key, required this.product, required this.userid}) : super(key: key);
+  final int homeOrFave;
+  const ProductScreen({Key? key, required this.product, required this.userid, this.homeOrFave = 0}) : super(key: key);
 
   @override
   State<ProductScreen> createState() => _ProductScreenState();
@@ -96,7 +97,7 @@ class _ProductScreenState extends State<ProductScreen> {
     final json = {
       'category': widget.product.category,
       'description' : widget.product.description,
-      'id' : widget.product.id,
+      'id' : docUser.id,
       'image' : widget.product.image,
       'price' : widget.product.price,
       'title' : widget.product.title,
@@ -108,6 +109,16 @@ class _ProductScreenState extends State<ProductScreen> {
     };
 
     await docUser.set(json);
+    setState((){
+      addButtonLoad = false;
+    });
+  }
+
+  void removeFromFavorites()async{
+
+    final docUser = FirebaseFirestore.instance.collection('users').doc(getCurrentUserId()).collection('properties').doc('favorites').collection('favorite products').doc(widget.product.id);
+
+    await docUser.delete();
     setState((){
       addButtonLoad = false;
     });
@@ -231,7 +242,8 @@ class _ProductScreenState extends State<ProductScreen> {
                                 ),
                                 //add to cart button
                                 SizedBox(height: 10,),
-                                CustomButton(text: "Add to Favorites",
+                                widget.homeOrFave == 0
+                                    ?CustomButton(text: "Add to Favorites",
                                   onPress: (){
                                     setState(() {
                                       addButtonLoad = true;
@@ -240,6 +252,19 @@ class _ProductScreenState extends State<ProductScreen> {
                                     addToFavorites();
                                     ScaffoldMessenger.of(context).showSnackBar(
                                         const SnackBar(content: Text("Added to favorites")));
+
+                                  },
+                                  loading: addButtonLoad,
+                                )
+                                : CustomButton(text: "Remove from favorites",
+                                  onPress: (){
+                                    setState(() {
+                                      addButtonLoad = true;
+                                    });
+                                    //call add to favorites function
+                                    removeFromFavorites();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(content: Text("Removed from favorites")));
 
                                   },
                                   loading: addButtonLoad,

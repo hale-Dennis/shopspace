@@ -142,18 +142,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           'Update Your Details',
                                           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18,),
                                         ),
-                                        name == null ? Text(
+                                        Text(
                                           currentUser!,
                                           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14,),
-                                        ) : Text(
-                                          name!,
-                                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14,),
                                         ),
-                                        email == null ? Text(
+                                        Text(
                                           currentEmail!,
-                                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14,),
-                                        ) :Text(
-                                          email!,
                                           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14,),
                                         ),
                                       ],
