@@ -1,13 +1,17 @@
 
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 import 'package:shopspace/components/profile_list_button.dart';
 import 'package:shopspace/screens/add_product.dart';
 import 'package:shopspace/screens/check_products.dart';
-import 'package:shopspace/screens/favourite.dart';
+
 import 'package:shopspace/screens/search_product.dart';
 import 'package:shopspace/screens/update_profile.dart';
+import 'package:shopspace/screens/update_test.dart';
 
 import '../components/custom_button.dart';
 
@@ -22,7 +26,53 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  late DocumentSnapshot snapshot;
+   String? profilePic;
+   String? email;
+   String? name;
+
+  void getProfilePic()async{
+    final data = await FirebaseFirestore.instance.collection('users').doc(getCurrentUserId()).collection('properties').doc('private information').get();
+    snapshot = data;
+    print(snapshot);
+    print(snapshot['name'].toString());
+    print(snapshot['location'].toString());
+  }
+
+  @override
+  void initState(){
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      if (FirebaseAuth.instance.currentUser!.displayName == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('dfg')));
+      } else {
+        FirebaseFirestore.instance
+            .collection('users')
+            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .collection('properties')
+            .doc('private information')
+            .get()
+            .then((DocumentSnapshot<Map<String, dynamic>> snapshot) {
+          name = snapshot['name'];
+          email = snapshot['user_email'];
+          profilePic = snapshot['profilePic'];
+        });
+      }
+    });
+    super.initState();
+  }
+
+
   bool _loadingButton = false;
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  String getCurrentUserId(){
+    final User? user = _auth.currentUser;
+    final uid = user?.uid;
+    print(uid);
+    return uid.toString();
+    //print(uemail);
+  }
 
   void signOutButtonPressed() {
     setState(() {
@@ -35,6 +85,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    //getProfilePic();
+    final currentUser = FirebaseAuth.instance.currentUser?.displayName;
+    final currentEmail = FirebaseAuth.instance.currentUser?.email;
+    print("name ${FirebaseAuth.instance.currentUser?.displayName}");
     return Center(
           child: SingleChildScrollView(
             child: Container(
@@ -68,6 +122,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   CircleAvatar(
                                     radius: 40,
                                     backgroundColor: Theme.of(context).primaryColor,
+                                    // child: CachedNetworkImage(
+                                    //   fit: BoxFit.cover,
+                                    //   imageUrl: snapshot['profilepic'].toString(),
+                                    // ),
                                     child: Text(
                                       'J',
                                       style: TextStyle(fontSize: 50, color: Colors.white),
@@ -84,12 +142,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           'Update Your Details',
                                           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18,),
                                         ),
-                                        Text(
-                                          'Test Test',
+                                        name == null ? Text(
+                                          currentUser!,
+                                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14,),
+                                        ) : Text(
+                                          name!,
                                           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14,),
                                         ),
-                                        Text(
-                                          'test@gmail.com',
+                                        email == null ? Text(
+                                          currentEmail!,
+                                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14,),
+                                        ) :Text(
+                                          email!,
                                           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14,),
                                         ),
                                       ],
@@ -128,9 +192,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ProfileListButton(icon: Icons.help_center_outlined, text: "Favourites", onPress: (){
                     Navigator.push(context, MaterialPageRoute(builder: (context)=>const FavoriteScreen()));
                   }),
-                  ProfileListButton(icon: Icons.history, text: "Update Profile".toString(), onPress: (
-
-                      ){}),
+                  ProfileListButton(icon: Icons.history, text: "Update Profile".toString(), onPress: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>const UpdateTest()));
+                  }),
                   //ProfileListButton(icon: Icons.settings, text: "Help & Support", onPress: (){}),
                   //ProfileListButton(icon: Icons.share, text: "Invite a friend", onPress: (){}),
                   ProfileListButton(icon: Icons.logout, text: "Log out", onPress: signOutButtonPressed),

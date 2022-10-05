@@ -9,6 +9,8 @@ import 'package:shopspace/utils/application_state.dart';
 import 'package:shopspace/utils/custome_theme.dart';
 import 'package:shopspace/utils/login_data.dart';
 
+import '../utils/common.dart';
+
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -22,7 +24,13 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _passwordController = TextEditingController();
   bool _loadingButton = false;
 
+
+
+
+
   Map<String, String> data = {};
+
+
 
   _LoginScreenState(){
     data = LoginData.signIn;
@@ -44,6 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
         _loadingButton = false;
       });
       //alert
+      CommonUtil.showAlert(context, "Wrong email or password", e.message.toString());
     }
   }
 
@@ -117,7 +126,7 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Column(
         children: [
           CustomTextInput(label: "Your email address", placeholder: "email@address.com", textEditingController: _emailController, icon: Icons.person_outline,),
-          CustomTextInput(label: "Password", placeholder: "password", textEditingController: _passwordController, icon: Icons.lock_outlined, password: true,),
+          CustomTextInput(label: data["label"] as String, placeholder: "password", textEditingController: _passwordController, icon: Icons.lock_outlined, password: true,),
           CustomButton(text: data["label"] as String, onPress: loginButtonPressed , loading: _loadingButton),
         ],
       ),

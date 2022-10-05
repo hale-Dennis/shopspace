@@ -31,7 +31,6 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
   String? downloadUrl;
   bool selection = false;
 
-
   // String? buttonText;
 
   @override
@@ -92,27 +91,41 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                   SizedBox(height: 20),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      child: profilePic == null
-                          ? CircleAvatar(
-                              radius: 70,
-                              backgroundColor: Colors.deepPurple,
-                              child: Image.asset(
-                                'assets/images/add_pic.png',
-                                height: 80,
-                                width: 80,
-                              ),
-                            )
-                          : profilePic!.contains('http')
-                              ? CircleAvatar(
-                                  radius: 70,
-                                  backgroundImage: NetworkImage(profilePic!),
-                                )
-                              : CircleAvatar(
-                                  radius: 70,
-                                  backgroundImage:
-                                      FileImage(File(profilePic!)),
+                    child: GestureDetector(
+                      onTap: () async {
+                        final XFile? pickImage = await ImagePicker().pickImage(
+                          source: ImageSource.gallery,
+                          imageQuality: 50,
+                        );
+                        if (pickImage != null) {
+                          setState(() {
+                            profilePic = pickImage.path;
+                            selection = true;
+                          });
+                        }
+                      },
+                      child: Container(
+                        child: profilePic == null
+                            ? CircleAvatar(
+                                radius: 70,
+                                backgroundColor: Colors.deepPurple,
+                                child: Image.asset(
+                                  'assets/images/add_pic.png',
+                                  height: 80,
+                                  width: 80,
                                 ),
+                              )
+                            : profilePic!.contains('http')
+                                ? CircleAvatar(
+                                    radius: 70,
+                                    backgroundImage: NetworkImage(profilePic!),
+                                  )
+                                : CircleAvatar(
+                                    radius: 70,
+                                    backgroundImage:
+                                        FileImage(File(profilePic!)),
+                                  ),
+                      ),
                     ),
                   ),
                   EcoTextField(
@@ -175,7 +188,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                       return null;
                     },
                   ),
-                  /*EcoButton(
+                  EcoButton(
                     title: nameC.text.isEmpty ? 'SAVE' : 'Update',
                     isLoginButton: true,
                     isLoading: isSaving,
@@ -192,20 +205,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                             //     : update();
                       }
                     },
-                  ),*/
-                  Padding(
-                    padding: EdgeInsets.all(8),
-                    child: ElevatedButton(onPressed: ()async{
-                      setState(() async{
-                        profilePic = await getImage();
-                      });
-
-                    }, child: Text("upload profile image")),
                   ),
-                  ElevatedButton(onPressed: (){
-                    save();
-                    Navigator.pop(context);
-                  }, child: Text("Save details")),
                 ],
               ),
             ),
@@ -216,7 +216,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
   }
 
 
-  /*Future<String?> uploadImage(File filepath, String? reference) async {
+  Future<String?> uploadImage(File filepath, String? reference) async {
     // try {
     //   final finalName =
     //       '${FirebaseAuth.instance.currentUser!.uid}${DateTime.now().second}';
@@ -258,135 +258,88 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
       _imageURL= await storage.downloadURL(fileName);
       print(_imageURL);
     }
-  }*/
+  }
 
-  Future getImage() async{
-    final Storage storage = Storage();
-    final results = await FilePicker.platform.pickFiles(
-      allowMultiple: false,
-      type: FileType.custom,
-      allowedExtensions: ['png', 'jpg'],
-    );
-
-    if (results == null){
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("No file selected")),
-      );
-    }else {
-      final path = results?.files.single.path!;
-      final fileName = getCurrentUserId() + "profile pic";
-
-      print(path);
-      print(fileName);
-
-      await storage
-          .uplaodFile(path!, fileName)
-          .then((value) => print('Done'));
-
-      downloadUrl = await storage.downloadURL(fileName);
-      print(downloadUrl);
-      return downloadUrl;
+  update() {
+    setState(() {
+      isSaving = true;
+    });
+    if (selection == true) {
+      uploadImage(File(profilePic!), 'profile').whenComplete(() {
+        Map<String, dynamic> data = {
+          'name': nameC.text,
+          'phone': phoneC.text,
+          'dob': dobC.text,
+          'gender': genderC.text,
+          'insta': instaC.text,
+          'location': locationC.text,
+          'profilePic': downloadUrl,
+        };
+        FirebaseFirestore.instance
+            .collection('users')
+            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .update(data)
+            .whenComplete(() {
+          FirebaseAuth.instance.currentUser!.updateDisplayName(nameC.text);
+          setState(() {
+            isSaving = false;
+          });
+        });
+      });
+    } else {
+      Map<String, dynamic> data = {
+        'name': nameC.text,
+        'phone': phoneC.text,
+        'dob': dobC.text,
+        'gender': genderC.text,
+        'insta': instaC.text,
+        'location': locationC.text,
+        'profilePic': profilePic,
+      };
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update(data)
+          .whenComplete(() {
+        FirebaseAuth.instance.currentUser!.updateDisplayName(nameC.text);
+        setState(() {
+          isSaving = false;
+        });
+      });
     }
   }
 
-  void save() async{
-    //profilePic = await getImage();
-    final json = {
-      'name': nameC.text,
-      'phone': phoneC.text,
-      'dob': dobC.text,
-      'gender': genderC.text,
-      'insta': instaC.text,
-      'location': locationC.text,
-      'profilePic': profilePic,
-    };
+  saveInfo() async{
+    setState(() {
+      isSaving = true;
+    });
+    uploadImage(File(profilePic!), 'profile').whenComplete(() async {
+      final json = {
+        'name': nameC.text,
+        'phone': phoneC.text,
+        'dob': dobC.text,
+        'gender': genderC.text,
+        'insta': instaC.text,
+        'location': locationC.text,
+        'profilePic': downloadUrl,
+      };
 
-    print(nameC.text);
-    print(phoneC.text);
-    final docUser =  await FirebaseFirestore.instance.collection('users').doc(getCurrentUserId()).collection('properties').doc('private information');
-    await docUser.update(json);
+      print(nameC.text);
+      print(phoneC.text);
+      final docUser =  await FirebaseFirestore.instance.collection('users').doc(getCurrentUserId()).collection('properties').doc('private information');
+      await docUser.update(json);
+      // FirebaseFirestore.instance
+      //     .collection('users')
+      //     .doc(FirebaseAuth.instance.currentUser!.uid)
+      //     .collection('properties')
+      //     .doc('private information')
+      //     .set(data)
+      //     .whenComplete(() {
+      //   FirebaseAuth.instance.currentUser!.updateDisplayName(nameC.text);
+      //   setState(() {
+      //     isSaving = false;
+      //   });
+      // });
+    });
   }
-
-//   update() {
-//     setState(() {
-//       isSaving = true;
-//     });
-//     if (selection == true) {
-//       uploadImage(File(profilePic!), 'profile').whenComplete(() {
-//         Map<String, dynamic> data = {
-//           'name': nameC.text,
-//           'phone': phoneC.text,
-//           'dob': dobC.text,
-//           'gender': genderC.text,
-//           'insta': instaC.text,
-//           'location': locationC.text,
-//           'profilePic': downloadUrl,
-//         };
-//         FirebaseFirestore.instance
-//             .collection('users')
-//             .doc(FirebaseAuth.instance.currentUser!.uid)
-//             .update(data)
-//             .whenComplete(() {
-//           FirebaseAuth.instance.currentUser!.updateDisplayName(nameC.text);
-//           setState(() {
-//             isSaving = false;
-//           });
-//         });
-//       });
-//     } else {
-//       Map<String, dynamic> data = {
-//         'name': nameC.text,
-//         'phone': phoneC.text,
-//         'dob': dobC.text,
-//         'gender': genderC.text,
-//         'insta': instaC.text,
-//         'location': locationC.text,
-//         'profilePic': profilePic,
-//       };
-//       FirebaseFirestore.instance
-//           .collection('users')
-//           .doc(FirebaseAuth.instance.currentUser!.uid)
-//           .update(data)
-//           .whenComplete(() {
-//         FirebaseAuth.instance.currentUser!.updateDisplayName(nameC.text);
-//         setState(() {
-//           isSaving = false;
-//         });
-//       });
-//     }
-//   }
-//
-//   saveInfo() async{
-//     setState(() {
-//       isSaving = true;
-//     });
-//     uploadImage(File(profilePic!), 'profile').whenComplete(() async {
-//       final json = {
-//         'name': nameC.text,
-//         'phone': phoneC.text,
-//         'dob': dobC.text,
-//         'gender': genderC.text,
-//         'insta': instaC.text,
-//         'location': locationC.text,
-//         'profilePic': downloadUrl,
-//       };
-//
-//       print(nameC.text);
-//       print(phoneC.text);
-//       final docUser =  await FirebaseFirestore.instance.collection('users').doc(getCurrentUserId()).collection('properties').doc('private information');
-//       await docUser.update(json);
-//       // FirebaseFirestore.instance
-//       //     .collection('users')
-//       //     .doc(FirebaseAuth.instance.currentUser!.uid)
-//       //     .collection('properties')
-//       //     .doc('private information')
-//       //     .set(data)
-//       //     .whenComplete(() {
-//       //   FirebaseAuth.instance.currentUser!.updateDisplayName(nameC.text);
-//       //   setState(() {
-//       //     isSaving = false;
-//       //   });
-//       // });
-//     });
-//   }
- }
+}

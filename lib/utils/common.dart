@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class CommonUtil {
@@ -13,5 +14,16 @@ class CommonUtil {
       "Content-Type": "application/json",
       "Authorization": "Bearer" + token,
     });
+  }
+
+  static showAlert(context, String heading, String body){
+    showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: Text(heading),
+        content: Text(body),
+        actions: [TextButton(onPressed: ()=> Navigator.pop(context, 'ok'),child: Text('OK'),)],
+      ),
+    );
   }
 }

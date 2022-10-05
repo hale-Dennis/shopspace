@@ -1,6 +1,9 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:shopspace/screens/product.dart';
+
+import '../models/product.dart';
 
 class SearchProductScreen extends SearchDelegate{
 
@@ -62,14 +65,31 @@ class SearchProductScreen extends SearchDelegate{
                   final String title = data.get('title');
                   final String image = data['image'];
                   final String price = data['price'].toString();
+                  final String user_id = data['userid'].toString();
+                  print(data['price']);
+                  print(data['views']);
 
                 return ListTile(
-                  onTap: (){},
+                  onTap: (){
+                    Product pro = Product(data['title'],
+                      data['price'],
+                      data['id'],
+                      data['description'],
+                      data['image'],
+                      data['category'],
+                      userid: user_id,
+                      datePosted: data['datePosted'],
+                      username: data['username'],
+                      location: data['location'],
+                      views: (data['views']),);
+
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductScreen(product:pro, userid: user_id,)));
+                  },
                   title: Text(title),
                   leading: CircleAvatar(
                     backgroundImage: NetworkImage(image),
                   ),
-                  subtitle: Text(price),
+                  subtitle: Text("\$" +price),
                 );
 
               })

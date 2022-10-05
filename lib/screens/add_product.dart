@@ -24,6 +24,8 @@ class AddProductScreenState extends State<AddProductScreen> {
   late String _category;
   String _imageURL = '';
   bool isLoading =  true;
+  bool notLoading = true;
+
 
 
 
@@ -266,7 +268,7 @@ class AddProductScreenState extends State<AddProductScreen> {
 
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: CustomButton(text: "upload image", onPress: ()async{
+                  child: CustomButton( text: "upload image", onPress: ()async{
                     await _formKey.currentState?.validate() == true ? _imageURL = getImage() as String : print('input all fields');
                   },),
                 ),

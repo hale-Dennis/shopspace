@@ -151,43 +151,43 @@ class _ProductScreenState extends State<ProductScreen> {
                         ),
                       ),
 
-                      Positioned(
-                        bottom: 0,
-                        left: 10,
-                        child: Container(
-                          padding: EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.rectangle,
-                            color: Color(0x26FFD847),//Color(0x40ffffff) ,
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                          ),
-                          height: 50,
-                          width: 300,
-                          child: ViewDate(date: widget.product.datePosted.toString(), views: widget.product.views),
-                          /*child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              SizedBox(
-                                width: 50,
-                                child: ListTile(
-                                    leading: Icon(Icons.timelapse),
-                                    title: Text("Posted:" + widget.product.datePosted.toString()),
-                                  ),
-                              ),
-
-
-                              // SizedBox(
-                              //   width: 50,
-                              //   child: ListTile(
-                              //     leading: Icon(Icons.remove_red_eye_outlined),
-                              //     title: Text("views" + widget.product.views.toString()),
-                              //     ),
-                              // ),
-
-                            ],
-                          ),*/
-                        ),
-                      ),
+                      // Positioned(
+                      //   bottom: 0,
+                      //   left: 10,
+                      //   child: Container(
+                      //     padding: EdgeInsets.all(8),
+                      //     decoration: BoxDecoration(
+                      //       shape: BoxShape.rectangle,
+                      //       color: Color(0x26FFD847),//Color(0x40ffffff) ,
+                      //       borderRadius: BorderRadius.all(Radius.circular(10)),
+                      //     ),
+                      //     height: 50,
+                      //     width: 300,
+                      //     child: ViewDate(date: widget.product.datePosted.toString(), views: widget.product.views),
+                      //     /*child: Row(
+                      //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      //       children: [
+                      //         SizedBox(
+                      //           width: 50,
+                      //           child: ListTile(
+                      //               leading: Icon(Icons.timelapse),
+                      //               title: Text("Posted:" + widget.product.datePosted.toString()),
+                      //             ),
+                      //         ),
+                      //
+                      //
+                      //         // SizedBox(
+                      //         //   width: 50,
+                      //         //   child: ListTile(
+                      //         //     leading: Icon(Icons.remove_red_eye_outlined),
+                      //         //     title: Text("views" + widget.product.views.toString()),
+                      //         //     ),
+                      //         // ),
+                      //
+                      //       ],
+                      //     ),*/
+                      //   ),
+                      // ),
                     ],
                   ),
                   Padding(

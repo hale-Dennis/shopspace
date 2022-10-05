@@ -7,19 +7,10 @@ class UserCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: Text("${user.username}"),
-                    ),
-                    Text("${user.uid}")
-                  ],
-                ),
-              ),
-    );
+    return Text("${user.username}");
+
+
   }
+
+
 }

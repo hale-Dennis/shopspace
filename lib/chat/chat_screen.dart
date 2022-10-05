@@ -26,13 +26,21 @@ class _ChatScreenState extends State<ChatScreen> {
     return ListView.builder(
       itemCount: _userList.length,
       itemBuilder: (context, index){
-        return ListTile(
-            title: UserCard(user: _userList[index]),
-            onTap: (){
-              var id = _userList[index].uid.toString();
-              var name = _userList[index].username.toString();
-              Navigator.push(context, MaterialPageRoute(builder: (context)=> ChatDetail(friendUid: id, friendName: name ,)));
-            },
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ListTile(
+              leading: CircleAvatar(
+                radius: 25,
+                backgroundColor: Colors.lightBlue,
+                child: Text("U"),
+              ),
+              title: Align( alignment: Alignment.centerLeft, child: UserCard(user: _userList[index])),//SizedBox(width: 300,child: Align(child: UserCard(user: _userList[index]),alignment: Alignment.centerLeft)),
+              onTap: (){
+                var id = _userList[index].uid.toString();
+                var name = _userList[index].username.toString();
+                Navigator.push(context, MaterialPageRoute(builder: (context)=> ChatDetail(friendUid: id, friendName: name ,)));
+              },
+          ),
         );
       },
     );

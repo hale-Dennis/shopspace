@@ -129,14 +129,18 @@ class _ChatDetailState extends State<ChatDetail> {
           .snapshots(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasError) {
-          return Center(
-            child: Text("Something went wrong"),
+          return Scaffold(
+            body: Center(
+              child: Text("Something went wrong"),
+            ),
           );
         }
 
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(
-            child: Text("Loading"),
+          return Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
           );
         }
 
